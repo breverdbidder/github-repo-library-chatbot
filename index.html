@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Repository Library Assistant</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-bounce { animation: bounce 1s infinite; }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="module">
+        const { useState, useEffect, useRef } = React;
+
+        // Repository categories
+        const REPO_CATEGORIES = {
+          "Discovery Tools": {
+            color: "bg-blue-500",
+            items: ["GitRepoAI", "RepoAnalyzer", "Trendshift", "GitHub Trending"]
+          },
+          "Awesome Lists": {
+            color: "bg-purple-500",
+            items: ["awesome", "awesome-agents", "awesome-LangGraph", "500-AI-Agents"]
+          },
+          "AI Agents": {
+            color: "bg-green-500",
+            items: ["LangGraph", "CrewAI", "AutoGen", "OpenAI Swarm"]
+          },
+          "Web Scraping": {
+            color: "bg-yellow-500",
+            items: ["Firecrawl", "Crawl4AI", "Browser-Use-RS", "Playwright"]
+          },
+          "Document Processing": {
+            color: "bg-red-500",
+            items: ["python-docx", "pdfplumber", "openpyxl", "mammoth"]
+          },
+          "Real Estate": {
+            color: "bg-indigo-500",
+            items: ["Zillow APIs", "Realtor Scraper", "Property Aggregator"]
+          }
+        };
+
+        const PRIORITY_QUEUE = {
+          high: [
+            { name: "Firecrawl /agent", purpose: "Replace RealForeclose scraping", dueDate: "2026-01-15", score: 85 },
+            { name: "LightRAG", purpose: "Simplify RAG implementation", dueDate: "2026-01-20", score: 82 },
+            { name: "Letta (.af spec)", purpose: "Agent version control", dueDate: "2026-01-25", score: 88 },
+            { name: "GitRepoAI", purpose: "Systematic quality analysis", dueDate: "2026-01-30", score: 90 }
+          ],
+          medium: [
+            { name: "Rill Analytics", purpose: "Codebase health dashboard", dueDate: "2026-02-15", score: 75 },
+            { name: "Browser-Use-RS", purpose: "Rust scraper performance", dueDate: "2026-02-28", score: 78 }
+          ],
+          low: [
+            { name: "Auto-GPT", purpose: "Autonomous agent patterns", dueDate: "2026-04-01", score: 68 }
+          ]
+        };
+
+        const TRENDING_DATA = [
+          { name: "Claude Code", category: "AI Agents", stars: "15.2K", trend: "+1.2K", date: "2026-01-04" },
+          { name: "adk-go", category: "AI Agents", stars: "5.7K", trend: "+151", date: "2026-01-04" },
+          { name: "LightRAG", category: "AI Agents", stars: "25K", trend: "+152", date: "2026-01-03" },
+          { name: "RustFS", category: "Infrastructure", stars: "8.3K", trend: "+420", date: "2026-01-02" }
+        ];
+
+        function GitHubRepoLibraryChatbot() {
+          const [activeView, setActiveView] = useState('chat');
+          const [messages, setMessages] = useState([
+            { role: 'assistant', content: 'Hi! I\'m your GitHub Repository Library assistant. I can help you:\\n\\n• Find repositories by category or use case\\n• Analyze priority queue items\\n• Track trending repos\\n• Recommend quality tools\\n• Explain repository assessments\\n\\nWhat would you like to explore?' }
+          ]);
+          const [input, setInput] = useState('');
+          const [isLoading, setIsLoading] = useState(false);
+          const messagesEndRef = useRef(null);
+
+          const processQuery = (userQuery) => {
+            setMessages(prev => [...prev, { role: 'user', content: userQuery }]);
+            setIsLoading(true);
+
+            setTimeout(() => {
+              let response = '';
+              const query = userQuery.toLowerCase();
+
+              if (query.includes('priority') || query.includes('evaluate')) {
+                response = `High Priority Items (Evaluate This Month):\\n\\n1. **Firecrawl /agent** (Score: 85, Due: Jan 15)\\n   Purpose: Replace RealForeclose scraping complexity\\n\\n2. **LightRAG** (Score: 82, Due: Jan 20)\\n   Purpose: Simplify RAG implementation\\n\\n3. **Letta .af spec** (Score: 88, Due: Jan 25)\\n   Purpose: Agent version control\\n\\n4. **GitRepoAI** (Score: 90, Due: Jan 30)\\n   Purpose: Systematic quality analysis\\n\\nAll are ready for evaluation with quality scores 80+.`;
+              } else if (query.includes('trending') || query.includes('ai agent')) {
+                response = `Top Trending AI Agent Repositories:\\n\\n1. **Claude Code** (15.2K stars, +1.2K today)\\n   - Agentic coding in terminal\\n   - Natural language commands\\n\\n2. **adk-go** (5.7K stars, +151 today)\\n   - Google's Go toolkit for AI agents\\n   - Production-grade\\n\\n3. **LightRAG** (25K stars, +152 today)\\n   - Simplified RAG systems\\n   - Already in your priority queue!`;
+              } else if (query.includes('scraping') || query.includes('scraper')) {
+                response = `Best Web Scraping Tools for BidDeed.AI:\\n\\n1. **Firecrawl** (Score: 85) - HIGH PRIORITY\\n   - Natural language extraction\\n   - No URLs needed\\n   - Could replace RealForeclose complexity\\n\\n2. **Crawl4AI**\\n   - LLM-optimized scraping\\n   - Training data collection\\n\\n3. **Browser-Use-RS** (Score: 78) - MEDIUM PRIORITY\\n   - Rust browser automation\\n   - High performance\\n\\nRecommendation: Evaluate Firecrawl first (due Jan 15).`;
+              } else {
+                response = `I can help with:\\n\\n• Repository categories (6 available)\\n• Priority queue (4 high, 3 medium, 2 low)\\n• Trending repos (4 latest)\\n• Quality assessments (0-100 scoring)\\n\\nTry: "Show me priority items" or "What's trending?"`;
+              }
+
+              setMessages(prev => [...prev, { role: 'assistant', content: response }]);
+              setIsLoading(false);
+            }, 1000);
+
+            setInput('');
+          };
+
+          const MindMapView = () => (
+            React.createElement('div', { className: 'p-6' },
+              React.createElement('h2', { className: 'text-2xl font-bold mb-6 flex items-center gap-2' },
+                '🧠 Repository Categories Mind Map'
+              ),
+              React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' },
+                Object.entries(REPO_CATEGORIES).map(([category, data]) =>
+                  React.createElement('div', { 
+                    key: category, 
+                    className: 'bg-white rounded-lg shadow-lg p-6 border-l-4 border-blue-500'
+                  },
+                    React.createElement('h3', { 
+                      className: `text-lg font-bold mb-4 ${data.color} text-white px-3 py-2 rounded`
+                    }, category),
+                    React.createElement('ul', { className: 'space-y-2' },
+                      data.items.map(item =>
+                        React.createElement('li', { 
+                          key: item, 
+                          className: 'flex items-center gap-2 text-gray-700'
+                        }, '→ ' + item)
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          );
+
+          const DashboardView = () => (
+            React.createElement('div', { className: 'p-6' },
+              React.createElement('h2', { className: 'text-2xl font-bold mb-6' },
+                '📊 Priority Queue Dashboard'
+              ),
+              React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-4 mb-8' },
+                React.createElement('div', { className: 'bg-red-50 border-l-4 border-red-500 p-4 rounded' },
+                  React.createElement('div', { className: 'text-3xl font-bold text-red-600' }, PRIORITY_QUEUE.high.length),
+                  React.createElement('div', { className: 'text-red-700' }, 'High Priority')
+                ),
+                React.createElement('div', { className: 'bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded' },
+                  React.createElement('div', { className: 'text-3xl font-bold text-yellow-600' }, PRIORITY_QUEUE.medium.length),
+                  React.createElement('div', { className: 'text-yellow-700' }, 'Medium Priority')
+                ),
+                React.createElement('div', { className: 'bg-green-50 border-l-4 border-green-500 p-4 rounded' },
+                  React.createElement('div', { className: 'text-3xl font-bold text-green-600' }, PRIORITY_QUEUE.low.length),
+                  React.createElement('div', { className: 'text-green-700' }, 'Low Priority')
+                )
+              ),
+              React.createElement('div', { className: 'space-y-4' },
+                PRIORITY_QUEUE.high.map(item =>
+                  React.createElement('div', { 
+                    key: item.name, 
+                    className: 'bg-white rounded-lg shadow p-4 border-l-4 border-red-500'
+                  },
+                    React.createElement('div', { className: 'flex justify-between items-start mb-2' },
+                      React.createElement('h4', { className: 'font-bold text-lg' }, item.name),
+                      React.createElement('span', { 
+                        className: 'bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-semibold'
+                      }, 'Score: ' + item.score)
+                    ),
+                    React.createElement('p', { className: 'text-gray-600 mb-2' }, item.purpose),
+                    React.createElement('div', { className: 'text-sm text-gray-500' }, '📅 Due: ' + item.dueDate)
+                  )
+                )
+              )
+            )
+          );
+
+          return React.createElement('div', { className: 'h-screen flex flex-col bg-gray-50' },
+            React.createElement('div', { className: 'bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 shadow-lg' },
+              React.createElement('h1', { className: 'text-3xl font-bold mb-2' }, 'GitHub Repository Library Assistant'),
+              React.createElement('p', { className: 'text-blue-100' }, 'AI-powered repository discovery & analysis for BidDeed.AI')
+            ),
+            React.createElement('div', { className: 'bg-white border-b' },
+              React.createElement('div', { className: 'flex gap-1 p-2' },
+                React.createElement('button', {
+                  onClick: () => setActiveView('chat'),
+                  className: `px-4 py-2 rounded-lg ${activeView === 'chat' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`
+                }, '💬 Chat'),
+                React.createElement('button', {
+                  onClick: () => setActiveView('mindmap'),
+                  className: `px-4 py-2 rounded-lg ${activeView === 'mindmap' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`
+                }, '🧠 Mind Map'),
+                React.createElement('button', {
+                  onClick: () => setActiveView('dashboard'),
+                  className: `px-4 py-2 rounded-lg ${activeView === 'dashboard' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`
+                }, '📊 Dashboard')
+              )
+            ),
+            React.createElement('div', { className: 'flex-1 overflow-hidden' },
+              activeView === 'chat' && React.createElement('div', { className: 'flex flex-col h-full' },
+                React.createElement('div', { className: 'flex-1 overflow-y-auto p-6 space-y-4' },
+                  messages.map((msg, idx) =>
+                    React.createElement('div', { 
+                      key: idx, 
+                      className: `flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`
+                    },
+                      React.createElement('div', { 
+                        className: `max-w-3xl rounded-lg p-4 ${msg.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-900'}`
+                      },
+                        React.createElement('div', { className: 'whitespace-pre-wrap' }, msg.content)
+                      )
+                    )
+                  ),
+                  isLoading && React.createElement('div', { className: 'flex justify-start' },
+                    React.createElement('div', { className: 'bg-gray-100 rounded-lg p-4' },
+                      React.createElement('div', { className: 'flex gap-2' },
+                        React.createElement('div', { className: 'w-2 h-2 bg-gray-400 rounded-full animate-bounce' }),
+                        React.createElement('div', { className: 'w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100' }),
+                        React.createElement('div', { className: 'w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200' })
+                      )
+                    )
+                  )
+                ),
+                React.createElement('div', { className: 'border-t p-4 bg-white' },
+                  React.createElement('div', { className: 'flex gap-2' },
+                    React.createElement('input', {
+                      type: 'text',
+                      value: input,
+                      onChange: (e) => setInput(e.target.value),
+                      onKeyPress: (e) => e.key === 'Enter' && input.trim() && processQuery(input),
+                      placeholder: 'Ask about repositories, trending items, or get recommendations...',
+                      className: 'flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500',
+                      disabled: isLoading
+                    }),
+                    React.createElement('button', {
+                      onClick: () => input.trim() && processQuery(input),
+                      disabled: isLoading || !input.trim(),
+                      className: 'bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-300'
+                    }, '📤 Send')
+                  ),
+                  React.createElement('div', { className: 'mt-3 flex flex-wrap gap-2' },
+                    React.createElement('button', {
+                      onClick: () => processQuery("What repos should I evaluate this month?"),
+                      className: 'text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full'
+                    }, 'Priority items'),
+                    React.createElement('button', {
+                      onClick: () => processQuery("Show me trending AI agent repos"),
+                      className: 'text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full'
+                    }, 'Trending AI'),
+                    React.createElement('button', {
+                      onClick: () => processQuery("Best web scraping tools for BidDeed.AI?"),
+                      className: 'text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full'
+                    }, 'Scraping tools')
+                  )
+                )
+              ),
+              activeView === 'mindmap' && React.createElement(MindMapView),
+              activeView === 'dashboard' && React.createElement(DashboardView)
+            )
+          );
+        }
+
+        ReactDOM.render(
+          React.createElement(GitHubRepoLibraryChatbot),
+          document.getElementById('root')
+        );
+    </script>
+</body>
+</html>
