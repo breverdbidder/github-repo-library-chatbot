@@ -1,0 +1,35 @@
+{
+  "name": "github-repo-library-chatbot",
+  "version": "1.0.0",
+  "description": "AI-powered GitHub repository discovery system with NLP chatbot, mind maps, and automated trending updates",
+  "main": "src/github-repo-chatbot.jsx",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "automation": "python weekly_trending_automation.py"
+  },
+  "keywords": [
+    "github",
+    "repository",
+    "chatbot",
+    "nlp",
+    "ai",
+    "trending",
+    "quality-analysis",
+    "biddeed-ai"
+  ],
+  "author": "Ariel Shapira <ariel@everestcapitalusa.com>",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "lucide-react": "^0.300.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.0.8"
+  }
+}
